@@ -19,6 +19,212 @@ const Chat = () => {
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
+  const styles = {
+    layout: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100vh',
+      backgroundColor: '#0a0a0f'
+    },
+    header: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: '1.25rem 2rem',
+      background: 'rgba(20, 20, 25, 0.7)',
+      backdropFilter: 'blur(12px)',
+      borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+      position: 'sticky',
+      top: 0,
+      zIndex: 100
+    },
+    backBtn: {
+      background: 'transparent',
+      border: 'none',
+      color: '#a0a0b0',
+      cursor: 'pointer',
+      padding: '0.5rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '50%',
+      marginRight: '1rem'
+    },
+    headerTitle: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.75rem'
+    },
+    chatContainer: {
+      flex: 1,
+      overflowY: 'auto',
+      padding: '2rem',
+      scrollBehavior: 'smooth'
+    },
+    messagesArea: {
+      maxWidth: '800px',
+      margin: '0 auto',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1.5rem'
+    },
+    messageWrapper: {
+      display: 'flex',
+      gap: '1rem',
+      maxWidth: '85%'
+    },
+    userMessageWrapper: {
+      alignSelf: 'flex-end',
+      flexDirection: 'row-reverse'
+    },
+    avatar: {
+      width: '36px',
+      height: '36px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#13131a',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      flexShrink: 0
+    },
+    userAvatar: {
+      background: 'linear-gradient(135deg, #6366f1, #818cf8)',
+      border: 'none'
+    },
+    botAvatar: {
+      color: '#6366f1'
+    },
+    messageBubble: {
+      padding: '1rem 1.25rem',
+      borderRadius: '18px',
+      fontSize: '0.95rem',
+      lineHeight: 1.6,
+      wordBreak: 'break-word'
+    },
+    botBubble: {
+      background: '#1e1e28',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      borderTopLeftRadius: '4px'
+    },
+    userBubble: {
+      background: '#4f46e5',
+      borderTopRightRadius: '4px'
+    },
+    errorBubble: {
+      background: 'rgba(239, 68, 68, 0.1)',
+      border: '1px solid rgba(239, 68, 68, 0.3)',
+      color: '#fca5a5'
+    },
+    messageImage: {
+      maxWidth: '100%',
+      maxHeight: '400px',
+      borderRadius: '12px',
+      marginBottom: '1rem',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      display: 'block'
+    },
+    typingBubble: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      color: '#a0a0b0',
+      fontStyle: 'italic'
+    },
+    inputArea: {
+      padding: '1.5rem 2rem',
+      background: '#0a0a0f',
+      borderTop: '1px solid rgba(255, 255, 255, 0.08)'
+    },
+    imagePreviewBar: {
+      maxWidth: '800px',
+      margin: '0 auto 1rem auto',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '1rem',
+      background: '#13131a',
+      padding: '1rem',
+      borderRadius: '12px',
+      border: '1px solid rgba(255, 255, 255, 0.08)'
+    },
+    previewThumbnail: {
+      width: '60px',
+      height: '60px',
+      borderRadius: '8px',
+      objectFit: 'cover',
+      border: '1px solid rgba(255, 255, 255, 0.08)'
+    },
+    previewText: {
+      flex: 1,
+      color: '#a0a0b0',
+      fontSize: '0.9rem'
+    },
+    clearImageBtn: {
+      background: 'transparent',
+      border: 'none',
+      color: '#a0a0b0',
+      cursor: 'pointer',
+      padding: '0.5rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '6px'
+    },
+    inputForm: {
+      maxWidth: '800px',
+      margin: '0 auto',
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.75rem'
+    },
+    imageBtn: {
+      background: 'transparent',
+      color: '#6366f1',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      width: '40px',
+      height: '40px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      flexShrink: 0
+    },
+    textInput: {
+      flex: 1,
+      background: '#13131a',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      borderRadius: '24px',
+      padding: '1rem 1.5rem',
+      color: 'white',
+      fontSize: '1rem',
+      fontFamily: 'inherit',
+      minWidth: 0
+    },
+    sendBtn: {
+      background: '#6366f1',
+      color: 'white',
+      border: 'none',
+      width: '40px',
+      height: '40px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      flexShrink: 0
+    },
+    disabledBtn: {
+      background: '#13131a',
+      color: '#a0a0b0',
+      cursor: 'not-allowed'
+    },
+    markdownLink: {
+      color: '#4a9eff',
+      textDecoration: 'underline'
+    }
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -104,27 +310,41 @@ const Chat = () => {
   };
 
   return (
-    <div className="chat-layout">
-      <header className="chat-header">
-        <button className="back-btn" onClick={() => navigate('/')}>
+    <div style={styles.layout}>
+      <header style={styles.header}>
+        <button style={styles.backBtn} onClick={() => navigate('/')}>
           <ArrowLeft size={20} />
         </button>
-        <div className="header-title">
-          <Bot size={24} className="bot-icon-small" />
-          <h2>Gemini Assistant</h2>
+        <div style={styles.headerTitle}>
+          <Bot size={24} color="#6366f1" />
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 600, margin: 0 }}>Gemini Assistant</h2>
         </div>
       </header>
 
-      <main className="chat-container">
-        <div className="messages-area">
+      <main style={styles.chatContainer}>
+        <div style={styles.messagesArea}>
           {messages.map((msg) => (
-            <div key={msg.id} className={`message-wrapper ${msg.sender}`}>
-              <div className="avatar">
+            <div
+              key={msg.id}
+              style={{ ...styles.messageWrapper, ...(msg.sender === 'user' ? styles.userMessageWrapper : {}) }}
+            >
+              <div
+                style={{
+                  ...styles.avatar,
+                  ...(msg.sender === 'user' ? styles.userAvatar : styles.botAvatar)
+                }}
+              >
                 {msg.sender === 'bot' ? <Bot size={20} /> : <User size={20} />}
               </div>
-              <div className={`message-bubble ${msg.isError ? 'error' : ''}`}>
+              <div
+                style={{
+                  ...styles.messageBubble,
+                  ...(msg.sender === 'bot' ? styles.botBubble : styles.userBubble),
+                  ...(msg.isError ? styles.errorBubble : {})
+                }}
+              >
                 {msg.image && (
-                  <img src={`data:${msg.imageType};base64,${msg.image}`} alt="User shared" className="message-image" />
+                  <img src={`data:${msg.imageType};base64,${msg.image}`} alt="User shared" style={styles.messageImage} />
                 )}
                 {msg.sender === 'bot' ? (
                   <ReactMarkdown
@@ -136,7 +356,7 @@ const Chat = () => {
                         
                         if (inline) {
                           return (
-                            <code className="inline-code" {...props}>
+                            <code style={{ background: '#111827', padding: '0.1rem 0.3rem', borderRadius: '4px' }} {...props}>
                               {children}
                             </code>
                           );
@@ -147,7 +367,6 @@ const Chat = () => {
                             style={dracula}
                             language={language}
                             PreTag="div"
-                            className="code-block"
                             {...props}
                           >
                             {String(children).replace(/\n$/, '')}
@@ -201,7 +420,7 @@ const Chat = () => {
                         </td>
                       ),
                       a: ({ node, children, ...props }) => (
-                        <a style={{ color: '#4a9eff', textDecoration: 'underline' }} {...props}>
+                        <a style={styles.markdownLink} {...props}>
                           {children}
                         </a>
                       ),
@@ -210,18 +429,18 @@ const Chat = () => {
                     {msg.text}
                   </ReactMarkdown>
                 ) : (
-                  <p>{msg.text}</p>
+                  <p style={{ margin: 0 }}>{msg.text}</p>
                 )}
               </div>
             </div>
           ))}
           {isLoading && (
-            <div className="message-wrapper bot">
-              <div className="avatar">
+            <div style={styles.messageWrapper}>
+              <div style={{ ...styles.avatar, ...styles.botAvatar }}>
                 <Bot size={20} />
               </div>
-              <div className="message-bubble typing">
-                <Loader2 size={16} className="spinner" />
+              <div style={{ ...styles.messageBubble, ...styles.botBubble, ...styles.typingBubble }}>
+                <Loader2 size={16} />
                 <span>Gemini is thinking...</span>
               </div>
             </div>
@@ -230,17 +449,17 @@ const Chat = () => {
         </div>
       </main>
 
-      <footer className="chat-input-area">
+      <footer style={styles.inputArea}>
         {imagePreview && (
-          <div className="image-preview-bar">
-            <img src={imagePreview} alt="Preview" className="preview-thumbnail" />
-            <span className="preview-text">Image selected</span>
-            <button type="button" onClick={clearImage} className="clear-image-btn">
+          <div style={styles.imagePreviewBar}>
+            <img src={imagePreview} alt="Preview" style={styles.previewThumbnail} />
+            <span style={styles.previewText}>Image selected</span>
+            <button type="button" onClick={clearImage} style={styles.clearImageBtn}>
               <X size={16} />
             </button>
           </div>
         )}
-        <form onSubmit={handleSend} className="input-form">
+        <form onSubmit={handleSend} style={styles.inputForm}>
           <input
             type="file"
             ref={fileInputRef}
@@ -251,7 +470,7 @@ const Chat = () => {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="image-btn"
+            style={{ ...styles.imageBtn, ...(isLoading ? styles.disabledBtn : {}) }}
             disabled={isLoading}
             title="Upload image"
           >
@@ -263,12 +482,15 @@ const Chat = () => {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={isLoading}
-            className="text-input"
+            style={styles.textInput}
           />
           <button 
             type="submit" 
             disabled={(!input.trim() && !selectedImage) || isLoading}
-            className="send-btn"
+            style={{
+              ...styles.sendBtn,
+              ...((!input.trim() && !selectedImage) || isLoading ? styles.disabledBtn : {})
+            }}
           >
             <Send size={20} />
           </button>
