@@ -19,9 +19,19 @@ if not logger.handlers:
 app = FastAPI(title="Gemini Chatbot API")
 
 # Enable CORS for the frontend
+# Configure allowed CORS origins via env var for deployments (comma-separated)
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "")
+if allowed_origins_env:
+    allowed_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
+else:
+    # default to allow all origins for development convenience
+    allowed_origins = ["*"]
+
+logger.info("CORS allowed origins: %s", allowed_origins)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Allow all origins for dev
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
