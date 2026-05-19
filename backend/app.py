@@ -1,6 +1,8 @@
 import os
 import sys
 import base64
+import uuid
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -9,6 +11,10 @@ from google import genai
 from google.genai import types
 
 load_dotenv()
+
+logger = logging.getLogger("gemini_chatbot")
+if not logger.handlers:
+    logging.basicConfig(level=logging.INFO)
 
 app = FastAPI(title="Gemini Chatbot API")
 
@@ -86,7 +92,18 @@ def chat_endpoint(req: MessageRequest):
         
         return {"response": response.text}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Gemini API Error: {str(e)}")
+        request_id = str(uuid.uuid4())
+        logger.exception(
+            "Chat request failed | request_id=%s | has_image=%s | image_type=%s | message_len=%s",
+            request_id,
+            bool(req.image),
+            req.image_type,
+            len(req.message or ""),
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=f"Gemini API Error (request_id={request_id}): {str(e)}",
+        )
 
 @app.get("/api/health")
 def health_check():
