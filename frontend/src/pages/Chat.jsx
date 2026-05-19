@@ -2,6 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Send, Bot, User, ArrowLeft, Loader2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import remarkGfm from 'remark-gfm';
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -75,7 +79,92 @@ const Chat = () => {
                 {msg.sender === 'bot' ? <Bot size={20} /> : <User size={20} />}
               </div>
               <div className={`message-bubble ${msg.isError ? 'error' : ''}`}>
-                <p>{msg.text}</p>
+                {msg.sender === 'bot' ? (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      code({ node, inline, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        const language = match ? match[1] : 'text';
+                        
+                        if (inline) {
+                          return (
+                            <code className="inline-code" {...props}>
+                              {children}
+                            </code>
+                          );
+                        }
+                        
+                        return (
+                          <SyntaxHighlighter
+                            style={dracula}
+                            language={language}
+                            PreTag="div"
+                            className="code-block"
+                            {...props}
+                          >
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        );
+                      },
+                      p: ({ node, children }) => <p style={{ margin: '0.5em 0' }}>{children}</p>,
+                      h1: ({ node, children }) => <h1 style={{ marginTop: '0.5em', marginBottom: '0.25em', fontSize: '1.5em' }}>{children}</h1>,
+                      h2: ({ node, children }) => <h2 style={{ marginTop: '0.5em', marginBottom: '0.25em', fontSize: '1.25em' }}>{children}</h2>,
+                      h3: ({ node, children }) => <h3 style={{ marginTop: '0.4em', marginBottom: '0.2em', fontSize: '1.1em' }}>{children}</h3>,
+                      ul: ({ node, children }) => <ul style={{ marginLeft: '1.5em', marginTop: '0.3em', marginBottom: '0.3em' }}>{children}</ul>,
+                      ol: ({ node, children }) => <ol style={{ marginLeft: '1.5em', marginTop: '0.3em', marginBottom: '0.3em' }}>{children}</ol>,
+                      blockquote: ({ node, children }) => (
+                        <blockquote style={{
+                          borderLeft: '4px solid #ccc',
+                          paddingLeft: '1em',
+                          marginLeft: '0',
+                          marginTop: '0.3em',
+                          marginBottom: '0.3em',
+                          opacity: 0.8
+                        }}>
+                          {children}
+                        </blockquote>
+                      ),
+                      table: ({ node, children }) => (
+                        <table style={{
+                          borderCollapse: 'collapse',
+                          width: '100%',
+                          marginTop: '0.5em',
+                          marginBottom: '0.5em'
+                        }}>
+                          {children}
+                        </table>
+                      ),
+                      th: ({ node, children }) => (
+                        <th style={{
+                          border: '1px solid #ddd',
+                          padding: '0.5em',
+                          textAlign: 'left',
+                          backgroundColor: '#f5f5f5'
+                        }}>
+                          {children}
+                        </th>
+                      ),
+                      td: ({ node, children }) => (
+                        <td style={{
+                          border: '1px solid #ddd',
+                          padding: '0.5em'
+                        }}>
+                          {children}
+                        </td>
+                      ),
+                      a: ({ node, children, ...props }) => (
+                        <a style={{ color: '#4a9eff', textDecoration: 'underline' }} {...props}>
+                          {children}
+                        </a>
+                      ),
+                    }}
+                  >
+                    {msg.text}
+                  </ReactMarkdown>
+                ) : (
+                  <p>{msg.text}</p>
+                )}
               </div>
             </div>
           ))}
