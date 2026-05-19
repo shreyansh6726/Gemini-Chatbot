@@ -1,5 +1,6 @@
 import os
 import sys
+import base64
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -52,6 +53,8 @@ def startup_event():
 
 class MessageRequest(BaseModel):
     message: str
+    image: str | None = None  # Base64 encoded image
+    image_type: str | None = None  # MIME type (e.g., "image/jpeg", "image/png")
 
 @app.post("/api/chat")
 def chat_endpoint(req: MessageRequest):
@@ -65,8 +68,22 @@ def chat_endpoint(req: MessageRequest):
             raise HTTPException(status_code=500, detail="Failed to initialize chat session. Check API key.")
 
     try:
-        # Using send_message directly for REST (we could also use stream, but basic send_message is easier for standard requests)
-        response = chat_session.send_message(req.message)
+        # Build content with text and optional image
+        if req.image and req.image_type:
+            # Decode base64 image and create multimodal content
+            image_bytes = base64.b64decode(req.image)
+            image_part = types.Part(
+                inline_data=types.Blob(
+                    mime_type=req.image_type,
+                    data=image_bytes
+                )
+            )
+            text_part = types.Part(text=req.message)
+            response = chat_session.send_message([text_part, image_part])
+        else:
+            # Text only message
+            response = chat_session.send_message(req.message)
+        
         return {"response": response.text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Gemini API Error: {str(e)}")

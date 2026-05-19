@@ -306,6 +306,15 @@ body {
   color: #fca5a5;
 }
 
+.message-image {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  display: block;
+}
+
 .message-bubble.typing {
   display: flex;
   align-items: center;
@@ -328,24 +337,70 @@ body {
   border-top: 1px solid var(--border);
 }
 
+.image-preview-bar {
+  max-width: 800px;
+  margin: 0 auto 1rem auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-panel);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.preview-thumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.preview-text {
+  flex: 1;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.clear-image-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  border-radius: 6px;
+}
+
+.clear-image-btn:hover {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+}
+
 .input-form {
   max-width: 800px;
   margin: 0 auto;
   position: relative;
   display: flex;
   align-items: center;
+  gap: 0.75rem;
 }
 
 .text-input {
-  width: 100%;
+  flex: 1;
   background: var(--bg-panel);
   border: 1px solid var(--border);
   border-radius: 24px;
-  padding: 1rem 3.5rem 1rem 1.5rem;
+  padding: 1rem 1.5rem;
   color: white;
   font-size: 1rem;
   font-family: inherit;
   transition: border-color 0.3s ease;
+  min-width: 0;
 }
 
 .text-input:focus {
@@ -353,9 +408,32 @@ body {
   border-color: var(--primary);
 }
 
+.image-btn {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--border);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.image-btn:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--primary);
+}
+
+.image-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .send-btn {
-  position: absolute;
-  right: 8px;
   background: var(--primary);
   color: white;
   border: none;
@@ -367,6 +445,7 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .send-btn:disabled {
