@@ -1,153 +1,179 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bot, Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight, Bot, PanelTop, ShieldCheck, Wand2 } from 'lucide-react';
+import './Home.css';
 
 const Home = () => {
   const navigate = useNavigate();
+  const revealRefs = useRef([]);
 
-  const styles = {
-    container: {
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
-      overflow: 'hidden',
-      padding: '2rem'
-    },
-    content: {
-      position: 'relative',
-      zIndex: 10,
-      maxWidth: '800px',
-      textAlign: 'center',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: '2rem'
-    },
-    iconWrapper: {
-      background: 'linear-gradient(135deg, #6366f1, #ec4899)',
-      padding: '1.5rem',
-      borderRadius: '24px',
-      boxShadow: '0 0 40px rgba(99, 102, 241, 0.5)',
-      marginBottom: '1rem'
-    },
-    heroTitle: {
-      fontSize: 'clamp(2.5rem, 7vw, 4rem)',
-      fontWeight: 800,
-      letterSpacing: '-0.02em',
-      margin: 0
-    },
-    gradientText: {
-      background: 'linear-gradient(to right, #818cf8, #c084fc, #f472b6)',
-      WebkitBackgroundClip: 'text',
-      backgroundClip: 'text',
-      color: 'transparent'
-    },
-    subtitle: {
-      fontSize: '1.25rem',
-      color: '#a0a0b0',
-      maxWidth: '600px',
-      lineHeight: 1.6
-    },
-    featuresGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-      gap: '1.5rem',
-      width: '100%',
-      margin: '2rem 0'
-    },
-    featureCard: {
-      background: '#13131a',
-      border: '1px solid rgba(255, 255, 255, 0.08)',
-      borderRadius: '16px',
-      padding: '2rem',
-      textAlign: 'left'
-    },
-    featureTitle: {
-      fontSize: '1.2rem',
-      marginBottom: '0.5rem'
-    },
-    featureBody: {
-      color: '#a0a0b0',
-      fontSize: '0.9rem',
-      lineHeight: 1.5
-    },
-    button: {
-      background: '#ffffff',
-      color: '#000000',
-      border: 'none',
-      borderRadius: '30px',
-      padding: '1rem 2.5rem',
-      fontSize: '1.1rem',
-      fontWeight: 600,
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.75rem',
-      cursor: 'pointer',
-      boxShadow: '0 10px 20px rgba(255, 255, 255, 0.1)'
-    },
-    glowBase: {
-      position: 'absolute',
-      borderRadius: '50%',
-      filter: 'blur(100px)',
-      zIndex: 1,
-      opacity: 0.5
-    },
-    glow1: {
-      background: '#6366f1',
-      width: '500px',
-      height: '500px',
-      top: '-100px',
-      left: '-100px'
-    },
-    glow2: {
-      background: '#ec4899',
-      width: '400px',
-      height: '400px',
-      bottom: '-50px',
-      right: '-50px'
+  const setRevealRef = (node) => {
+    if (node && !revealRefs.current.includes(node)) {
+      revealRefs.current.push(node);
     }
   };
 
-  return (
-    <div style={styles.container}>
-      <div style={styles.content}>
-        <div style={styles.iconWrapper}>
-          <Bot size={48} color="#ffffff" />
-        </div>
-        <h1 style={styles.heroTitle}>
-          Meet <span style={styles.gradientText}>Gemini</span>
-        </h1>
-        <p style={styles.subtitle}>
-          Your intelligent AI assistant powered by Google's Gemini 2.5 Flash model. 
-          Experience blazing fast responses and live search capabilities.
-        </p>
-        
-        <div style={styles.featuresGrid}>
-          <div style={styles.featureCard}>
-            <Sparkles color="#6366f1" style={{ marginBottom: '1rem' }} />
-            <h3 style={styles.featureTitle}>Lightning Fast</h3>
-            <p style={styles.featureBody}>Powered by the optimized Gemini 2.5 Flash model for instant answers.</p>
-          </div>
-          <div style={styles.featureCard}>
-            <Bot color="#6366f1" style={{ marginBottom: '1rem' }} />
-            <h3 style={styles.featureTitle}>Conversational</h3>
-            <p style={styles.featureBody}>Maintains context and understands nuances in your ongoing dialogue.</p>
-          </div>
-        </div>
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.18 }
+    );
 
-        <button 
-          style={styles.button}
-          onClick={() => navigate('/chat')}
-        >
-          <span>Start Chatting</span>
-          <ArrowRight size={20} />
-        </button>
-      </div>
-      
-      <div style={{ ...styles.glowBase, ...styles.glow1 }} />
-      <div style={{ ...styles.glowBase, ...styles.glow2 }} />
+    revealRefs.current.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, []);
+
+  const metrics = [
+    { value: 'Calm', label: 'Conversation rhythm' },
+    { value: 'Smooth', label: 'Hover + scroll motion' },
+    { value: 'Clear', label: 'Visual hierarchy' }
+  ];
+
+  const features = [
+    {
+      icon: <Wand2 size={20} />,
+      title: 'Deliberate responses',
+      description: 'Structured answers that feel composed, readable, and calm instead of noisy or mechanical.'
+    },
+    {
+      icon: <ShieldCheck size={20} />,
+      title: 'Vision-ready workflow',
+      description: 'The assistant keeps image uploads and text in the same flow, so the conversation feels continuous.'
+    },
+    {
+      icon: <PanelTop size={20} />,
+      title: 'Polished presentation',
+      description: 'Soft depth, glass surfaces, and responsive motion make the app feel crafted rather than templated.'
+    }
+  ];
+
+  return (
+    <div className="home-page">
+      <main className="home-page__content">
+        <header className="home-topbar glass-panel hover-lift reveal" ref={setRevealRef}>
+          <div className="brand-lockup">
+            <div className="brand-lockup__icon">
+              <Bot size={22} />
+            </div>
+            <div className="brand-lockup__copy">
+              <span className="brand-lockup__eyebrow">Gemini Chatbot</span>
+              <strong>Assistant Studio</strong>
+            </div>
+          </div>
+          <div className="topbar-chips">
+            <span className="pill">Image aware</span>
+            <span className="pill">Markdown output</span>
+            <span className="pill">Smooth motion</span>
+          </div>
+        </header>
+
+        <section className="hero-panel glass-panel reveal" ref={setRevealRef}>
+          <div className="hero-panel__copy">
+            <span className="section-kicker">Built to feel considered</span>
+            <h1 className="hero-title">
+              Meet <span className="hero-title__accent">Gemini</span>, wrapped in a calmer interface.
+            </h1>
+            <p className="hero-copy">
+              A polished assistant surface for fast answers, image-aware prompts, and clear markdown rendering.
+              The layout leans into depth, rhythm, and motion so the product feels intentionally designed.
+            </p>
+
+            <div className="hero-actions">
+              <button className="cta-button" onClick={() => navigate('/chat')}>
+                <span>Start chatting</span>
+                <ArrowRight size={18} />
+              </button>
+              <span className="hero-meta">No clutter, no filler, just a focused conversation flow.</span>
+            </div>
+          </div>
+
+          <div className="hero-panel__preview hover-lift">
+            <div className="preview-card">
+              <div className="preview-card__header">
+                <span className="preview-card__dot" />
+                <span>Conversation preview</span>
+              </div>
+              <div className="preview-stack">
+                <div className="preview-bubble preview-bubble--bot">
+                  I can help you shape responses, organize thoughts, or inspect an image with the same polished flow.
+                </div>
+                <div className="preview-bubble preview-bubble--user">
+                  Make the interface feel premium and smooth.
+                </div>
+                <div className="preview-bubble preview-bubble--bot preview-bubble--accent">
+                  The current experience now uses layered glass surfaces, soft reveal motion, and stronger spacing.
+                </div>
+              </div>
+              <div className="preview-card__footer">
+                <span>Readable</span>
+                <span>Responsive</span>
+                <span>Professional</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="metrics-grid">
+          {metrics.map((metric, index) => (
+            <article
+              className={`metric-card glass-panel hover-lift reveal reveal-delay-${index + 1}`}
+              key={metric.label}
+              ref={setRevealRef}
+            >
+              <strong>{metric.value}</strong>
+              <span>{metric.label}</span>
+            </article>
+          ))}
+        </section>
+
+        <section className="feature-section">
+          <div className="section-heading reveal" ref={setRevealRef}>
+            <span className="section-kicker">What changed</span>
+            <h2 className="section-title">More depth, more motion, less template energy.</h2>
+            <p className="section-copy">
+              Each surface, card, and button now has a clearer hierarchy and a softer interaction model.
+              The result is a UI that feels made rather than assembled.
+            </p>
+          </div>
+
+          <div className="feature-grid">
+            {features.map((feature, index) => (
+              <article
+                className={`feature-card glass-panel hover-lift reveal reveal-delay-${index + 1}`}
+                key={feature.title}
+                ref={setRevealRef}
+              >
+                <div className="feature-card__icon">{feature.icon}</div>
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="story-panel glass-panel reveal" ref={setRevealRef}>
+          <div>
+            <span className="section-kicker">Designed for flow</span>
+            <h2 className="section-title">The app now carries a stronger visual point of view.</h2>
+          </div>
+          <p className="section-copy section-copy--compact">
+            Aurora glows, soft borders, layered glass, and subtle motion work together to make the experience
+            feel premium without becoming busy.
+          </p>
+          <button className="cta-button cta-button--secondary" onClick={() => navigate('/chat')}>
+            <span>Open the assistant</span>
+            <ArrowRight size={18} />
+          </button>
+        </section>
+      </main>
     </div>
   );
 };

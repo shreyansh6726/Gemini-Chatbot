@@ -1,0 +1,211 @@
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.app-shell__grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 140px 140px;
+  opacity: 0.2;
+  mask-image: radial-gradient(circle at center, black, transparent 92%);
+}
+
+.app-shell__orb {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  animation: orbit 18s ease-in-out infinite;
+}
+
+.app-shell__orb--one {
+  top: -8rem;
+  left: -6rem;
+  width: 28rem;
+  height: 28rem;
+  background: radial-gradient(circle, rgba(110, 231, 216, 0.26), transparent 68%);
+}
+
+.app-shell__orb--two {
+  right: -5rem;
+  bottom: 8rem;
+  width: 24rem;
+  height: 24rem;
+  background: radial-gradient(circle, rgba(255, 184, 107, 0.2), transparent 70%);
+  animation-delay: -6s;
+}
+
+.glass-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+
+.hover-lift {
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-strong);
+  box-shadow: 0 30px 80px rgba(1, 6, 18, 0.52);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.section-kicker {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.38rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(110, 231, 216, 0.1);
+  color: #a8f5eb;
+  border: 1px solid rgba(110, 231, 216, 0.18);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.section-heading,
+.section-title,
+.section-copy {
+  margin: 0;
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+}
+
+.section-copy {
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 68ch;
+}
+
+.section-copy--compact {
+  max-width: 48ch;
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 50px;
+  padding: 0.9rem 1.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(110, 231, 216, 1), rgba(59, 201, 255, 1));
+  color: #04111c;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(59, 201, 255, 0.24);
+  transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(59, 201, 255, 0.28);
+  filter: saturate(1.06);
+}
+
+.cta-button--secondary {
+  background: linear-gradient(135deg, rgba(255, 184, 107, 1), rgba(255, 214, 153, 1));
+}
+
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 200ms ease, border-color 200ms ease, background 200ms ease, color 200ms ease;
+}
+
+.icon-button:hover:not(.is-disabled) {
+  transform: translateY(-2px);
+  border-color: rgba(110, 231, 216, 0.35);
+  background: rgba(110, 231, 216, 0.12);
+}
+
+.icon-button--ghost {
+  background: transparent;
+}
+
+.icon-button.is-disabled,
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px) scale(0.985);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.reveal-delay-1 {
+  transition-delay: 80ms;
+}
+
+.reveal-delay-2 {
+  transition-delay: 140ms;
+}
+
+.reveal-delay-3 {
+  transition-delay: 200ms;
+}
+
+@keyframes orbit {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0) scale(1.05);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 900ms linear infinite;
+}
