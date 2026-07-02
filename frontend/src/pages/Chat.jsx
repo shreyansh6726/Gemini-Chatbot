@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { GoogleGenAI } from '@google/genai';
 import { Bot, Loader2, User } from 'lucide-react';
 
 const Chat = () => {
@@ -12,6 +12,23 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [apiKeyMissing, setApiKeyMissing] = useState(false);
+
+  const ai = useMemo(() => {
+    const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
+    if (!apiKey) return null;
+
+    return new GoogleGenAI({ apiKey });
+  }, []);
+
+  const generationConfig = useMemo(
+    () => ({
+      temperature: 1,
+      maxOutputTokens: 32768,
+      topP: 0.95
+    }),
+    []
+  );
 
   useEffect(() => {
     const root = shellRef.current;
@@ -72,8 +89,23 @@ const Chat = () => {
     event.preventDefault();
     if (!input.trim() && !selectedImage) return;
 
+    if (!ai) {
+      setApiKeyMissing(true);
+      setMessages((current) => [
+        ...current,
+        {
+          id: Date.now() + 1,
+          text: 'Set REACT_APP_GEMINI_API_KEY in frontend/.env to enable chat.',
+          sender: 'bot',
+          isError: true
+        }
+      ]);
+      return;
+    }
+
     const userMsg = input.trim();
     const userImage = selectedImage;
+    const promptText = userMsg || 'Describe this image.';
 
     setInput('');
     setSelectedImage(null);
@@ -86,7 +118,7 @@ const Chat = () => {
       ...messages,
       {
         id: Date.now(),
-        text: userMsg,
+        text: userMsg || 'Image attached',
         sender: 'user',
         image: userImage ? userImage.data : null,
         imageType: userImage ? userImage.type : null
@@ -97,17 +129,55 @@ const Chat = () => {
     setIsLoading(true);
 
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND || 'http://localhost:8000';
-      const response = await axios.post(`${backendUrl}/api/chat`, {
-        message: userMsg,
-        image: userImage ? userImage.data : null,
-        image_type: userImage ? userImage.type : null
+      const inputParts = [{ text: promptText }];
+
+      if (userImage) {
+        inputParts.push({
+          inlineData: {
+            mimeType: userImage.type,
+            data: userImage.data
+          }
+        });
+      }
+
+      const interaction = await ai.interactions.create({
+        model: 'gemini-2.5-flash-image',
+        input: inputParts,
+        generationConfig,
+        responseModalities: ['image', 'text']
       });
 
-      if (response.data && response.data.response) {
+      const textParts = [];
+      const imageParts = [];
+
+      if (interaction.steps) {
+        for (const step of interaction.steps) {
+          if (step.type !== 'model_output' || !step.content) continue;
+
+          for (const part of step.content) {
+            if (part.type === 'text' && part.text) {
+              textParts.push(part.text);
+            } else if (part.type === 'image' && part.data) {
+              imageParts.push(`data:image/png;base64,${part.data}`);
+            }
+          }
+        }
+      }
+
+      if (textParts.length > 0 || imageParts.length > 0) {
         setMessages([
           ...newMessages,
-          { id: Date.now() + 1, text: response.data.response, sender: 'bot' }
+          {
+            id: Date.now() + 1,
+            text: textParts.join('\n\n'),
+            sender: 'bot',
+            images: imageParts
+          }
+        ]);
+      } else {
+        setMessages([
+          ...newMessages,
+          { id: Date.now() + 1, text: 'No response was returned by Gemini.', sender: 'bot', isError: true }
         ]);
       }
     } catch (error) {
@@ -133,6 +203,11 @@ const Chat = () => {
             <span>Gemini Chatbot</span>
           </div>
           <p className="chat-header__copy">A focused workspace for clear, professional conversations.</p>
+          {apiKeyMissing && (
+            <p className="chat-header__copy chat-header__copy--warning">
+              Add <code>REACT_APP_GEMINI_API_KEY</code> in <code>frontend/.env</code> to enable the chat UI.
+            </p>
+          )}
         </header>
 
         <section className="chat-window" aria-label="Chat conversation" data-reveal>
@@ -151,6 +226,9 @@ const Chat = () => {
                     {msg.image && (
                       <img src={`data:${msg.imageType};base64,${msg.image}`} alt="Uploaded" className="chat-image" />
                     )}
+                    {msg.images?.map((imageSrc, index) => (
+                      <img key={`${msg.id}-${index}`} src={imageSrc} alt={`Generated ${index + 1}`} className="chat-image" />
+                    ))}
                     <p>{msg.text}</p>
                   </div>
                 </article>

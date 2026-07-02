@@ -99,6 +99,10 @@ button {
   line-height: 1.6;
 }
 
+.chat-header__copy--warning {
+  color: #8c4a00;
+}
+
 .chat-window {
   flex: 1;
   display: flex;
