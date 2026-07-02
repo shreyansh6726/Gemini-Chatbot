@@ -23,10 +23,10 @@ module.exports = async function handler(req, res) {
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const input = [{ text: promptText }];
 
+    const parts = [{ text: promptText }];
     if (image && imageType) {
-      input.push({
+      parts.push({
         inlineData: {
           mimeType: imageType,
           data: image
@@ -34,40 +34,25 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const interaction = await ai.interactions.create({
-      model: 'gemini-2.5-flash-image',
-      input,
-      generationConfig: {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: [{ role: 'user', parts }],
+      config: {
         temperature: 1,
+        topP: 0.95,
         maxOutputTokens: 32768,
-        topP: 0.95
-      },
-      responseModalities: ['image', 'text']
+        responseModalities: ['TEXT']
+      }
     });
 
-    const textParts = [];
-    const imageParts = [];
-
-    if (interaction.steps) {
-      for (const step of interaction.steps) {
-        if (step.type !== 'model_output' || !step.content) continue;
-
-        for (const part of step.content) {
-          if (part.type === 'text' && part.text) {
-            textParts.push(part.text);
-          } else if (part.type === 'image' && part.data) {
-            imageParts.push(`data:image/png;base64,${part.data}`);
-          }
-        }
-      }
-    }
-
     return res.status(200).json({
-      response: textParts.join('\n\n'),
-      images: imageParts
+      response: response.text || ''
     });
   } catch (error) {
     console.error('Gemini serverless error:', error);
-    return res.status(500).json({ error: 'Gemini request failed' });
+    return res.status(500).json({
+      error: 'Gemini request failed',
+      detail: error?.message || String(error)
+    });
   }
 };
