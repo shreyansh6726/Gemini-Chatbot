@@ -10,7 +10,11 @@ const MarkdownMessage = ({ text }) => (
     className="chat-markdown"
     remarkPlugins={[remarkGfm]}
     components={{
-      a: ({ node, ...props }) => <a {...props} target="_blank" rel="noreferrer" />,
+      a: ({ node, children, ...props }) => (
+        <a {...props} target="_blank" rel="noreferrer">
+          {children}
+        </a>
+      ),
       code: ({ inline, className, children, ...props }) => {
         const match = /language-(\w+)/.exec(className || '');
 
