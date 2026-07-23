@@ -1,5 +1,49 @@
 import React, { useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Bot, Loader2, User } from 'lucide-react';
+
+const MarkdownMessage = ({ text }) => (
+  <ReactMarkdown
+    className="chat-markdown"
+    remarkPlugins={[remarkGfm]}
+    components={{
+      a: ({ node, ...props }) => <a {...props} target="_blank" rel="noreferrer" />,
+      code: ({ inline, className, children, ...props }) => {
+        const match = /language-(\w+)/.exec(className || '');
+
+        if (inline) {
+          return (
+            <code className="chat-inline-code" {...props}>
+              {children}
+            </code>
+          );
+        }
+
+        return (
+          <SyntaxHighlighter
+            language={match?.[1] || 'text'}
+            style={vscDarkPlus}
+            customStyle={{ margin: 0, borderRadius: '12px', padding: '14px 16px' }}
+            codeTagProps={{ style: { fontFamily: 'Consolas, "Cascadia Code", "Courier New", monospace' } }}
+            PreTag="div"
+            {...props}
+          >
+            {String(children).replace(/\n$/, '')}
+          </SyntaxHighlighter>
+        );
+      },
+      p: ({ node, ...props }) => <p {...props} />,
+      ul: ({ node, ...props }) => <ul {...props} />,
+      ol: ({ node, ...props }) => <ol {...props} />,
+      li: ({ node, ...props }) => <li {...props} />
+    }}
+  >
+    {text}
+  </ReactMarkdown>
+);
 
 const Chat = () => {
   const shellRef = useRef(null);
@@ -195,7 +239,7 @@ const Chat = () => {
                     {msg.images?.map((imageSrc, index) => (
                       <img key={`${msg.id}-${index}`} src={imageSrc} alt={`Generated ${index + 1}`} className="chat-image" />
                     ))}
-                    <p>{msg.text}</p>
+                    {isUser ? <p>{msg.text}</p> : <MarkdownMessage text={msg.text} />}
                   </div>
                 </article>
               );

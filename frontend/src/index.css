@@ -192,6 +192,89 @@ button {
   color: #06202b;
 }
 
+.chat-markdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #06202b;
+}
+
+.chat-markdown > :first-child {
+  margin-top: 0;
+}
+
+.chat-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.chat-markdown p,
+.chat-markdown ul,
+.chat-markdown ol,
+.chat-markdown blockquote,
+.chat-markdown pre,
+.chat-markdown table {
+  margin: 0;
+}
+
+.chat-markdown ul,
+.chat-markdown ol {
+  padding-left: 1.25rem;
+}
+
+.chat-markdown li + li {
+  margin-top: 0.35rem;
+}
+
+.chat-markdown blockquote {
+  padding: 10px 14px;
+  border-left: 4px solid rgba(7, 122, 125, 0.34);
+  background: rgba(122, 226, 207, 0.1);
+  border-radius: 10px;
+}
+
+.chat-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+
+.chat-markdown th,
+.chat-markdown td {
+  border: 1px solid rgba(6, 32, 43, 0.1);
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.chat-markdown th {
+  background: rgba(7, 122, 125, 0.08);
+}
+
+.chat-markdown pre {
+  overflow-x: auto;
+  border-radius: 12px;
+  background: #1e1e1e !important;
+}
+
+.chat-markdown code {
+  font-family: Consolas, "Cascadia Code", "Courier New", monospace;
+}
+
+.chat-inline-code {
+  display: inline-block;
+  padding: 0.15rem 0.4rem;
+  border-radius: 8px;
+  background: rgba(6, 32, 43, 0.08);
+  color: #083344;
+  font-size: 0.95em;
+}
+
+.chat-markdown a {
+  color: #0b6d70;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
 .chat-bubble--user {
   background: linear-gradient(180deg, rgba(122, 226, 207, 0.22) 0%, rgba(7, 122, 125, 0.12) 100%);
   border-top-right-radius: 6px;

@@ -67,7 +67,15 @@ module.exports = async function handler(req, res) {
   }
 
   const { message, image, imageType } = req.body || {};
-  const promptText = typeof message === 'string' && message.trim() ? message.trim() : 'Describe this image.';
+    const userPrompt = typeof message === 'string' && message.trim() ? message.trim() : 'Describe this image.';
+    const promptText = [
+      'Respond in Markdown.',
+      'Use fenced code blocks with a language name for any code.',
+      'Keep the answer concise, clear, and well structured.',
+      'Do not wrap the whole response in a code block.',
+      '',
+      userPrompt
+    ].join('\n');
 
   try {
     const ai = new GoogleGenAI({ apiKey });
