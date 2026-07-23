@@ -110,7 +110,27 @@ const Chat = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
+        let errorDetail = `Request failed with status ${response.status}`;
+        try {
+          const errorText = await response.text();
+          if (errorText) {
+            try {
+              const errorData = JSON.parse(errorText);
+              if (errorData?.detail) {
+                errorDetail = errorData.detail;
+              } else if (errorData?.error) {
+                errorDetail = errorData.error;
+              } else {
+                errorDetail = errorText;
+              }
+            } catch {
+              errorDetail = errorText;
+            }
+          }
+        } catch {
+        }
+
+        throw new Error(errorDetail);
       }
 
       const data = await response.json();
